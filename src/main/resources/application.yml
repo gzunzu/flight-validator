@@ -1,0 +1,16 @@
+config:
+    activate:
+      on-profile: local
+
+validation-rules:
+  general:
+    maxKm: 12000
+    paxThreshold: 250
+    limitedByPaxKm: 8000
+  time:
+    noTakeOffHour: 20
+    limitedDistanceTakeOffHour: 14
+    limitedKm: 9000
+  west-destination:
+    noTakeOffHour: 15
+    limitedByHourKm: 3000
