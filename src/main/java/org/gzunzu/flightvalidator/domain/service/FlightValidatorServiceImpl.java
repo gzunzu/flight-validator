@@ -1,6 +1,5 @@
 package org.gzunzu.flightvalidator.domain.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.model.Flight;
@@ -10,16 +9,27 @@ import org.gzunzu.flightvalidator.domain.ports.FlightValidatorService;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class FlightValidatorServiceImpl implements FlightValidatorService {
 
+    @Qualifier("distanceRuleService")
     private final RuleValidatorService distanceRuleService;
+    @Qualifier("distanceRuleService")
     private final RuleValidatorService takeOffRuleService;
+    @Qualifier("westDestinationRuleService")
     private final RuleValidatorService westDestinationRuleService;
+
+    public FlightValidatorServiceImpl(final RuleValidatorService distanceRuleService,
+                                      final RuleValidatorService takeOffRuleService,
+                                      final RuleValidatorService westDestinationRuleService) {
+        this.distanceRuleService = distanceRuleService;
+        this.takeOffRuleService = takeOffRuleService;
+        this.westDestinationRuleService = westDestinationRuleService;
+    }
 
     @Override
     public ValidatedFlightDTO validateFlight(final Flight flight) {
