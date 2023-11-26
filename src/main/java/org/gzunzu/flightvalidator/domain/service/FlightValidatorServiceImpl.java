@@ -16,16 +16,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class FlightValidatorServiceImpl implements FlightValidatorService {
 
-    @Qualifier("distanceRuleService")
     private final RuleValidatorService distanceRuleService;
-    @Qualifier("distanceRuleService")
     private final RuleValidatorService takeOffRuleService;
-    @Qualifier("westDestinationRuleService")
     private final RuleValidatorService westDestinationRuleService;
 
-    public FlightValidatorServiceImpl(final RuleValidatorService distanceRuleService,
-                                      final RuleValidatorService takeOffRuleService,
-                                      final RuleValidatorService westDestinationRuleService) {
+    public FlightValidatorServiceImpl(@Qualifier("distanceRuleService") final RuleValidatorService distanceRuleService,
+                                      @Qualifier("distanceRuleService") final RuleValidatorService takeOffRuleService,
+                                      @Qualifier("distanceRuleService") final RuleValidatorService westDestinationRuleService) {
         this.distanceRuleService = distanceRuleService;
         this.takeOffRuleService = takeOffRuleService;
         this.westDestinationRuleService = westDestinationRuleService;
