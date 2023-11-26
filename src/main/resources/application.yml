@@ -1,13 +1,9 @@
-config:
-  activate:
-    on-profile: local
-
 validation-rules:
   distance:
     maxKm: 12000
     paxThreshold: 250
     limitedByPaxKm: 8000
-  takeOff:
+  take-off:
     noTakeOffHour: 20
     limitedDistanceTakeOffHour: 14
     limitedKm: 9000
