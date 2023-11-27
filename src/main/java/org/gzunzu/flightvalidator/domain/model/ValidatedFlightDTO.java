@@ -17,12 +17,12 @@ public class ValidatedFlightDTO implements Serializable {
 
     private Flight flight;
 
-    private double distance;
+    private Double distance;
     private EnumMap<RuleValidationMessage, String> validationMessages;
     @Setter
     private Boolean feasible;
 
-    public ValidatedFlightDTO(final Flight flight, final double distance) {
+    public ValidatedFlightDTO(final Flight flight, final Double distance) {
         this.flight = flight;
         this.distance = distance;
         this.validationMessages = new EnumMap<>(RuleValidationMessage.class);

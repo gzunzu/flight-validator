@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
+import org.gzunzu.flightvalidator.domain.model.Travel;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
 import org.gzunzu.flightvalidator.domain.ports.FlightValidatorService;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
@@ -21,8 +22,8 @@ public class FlightValidatorServiceImpl implements FlightValidatorService {
     private final RuleValidatorService westDestinationRuleService;
 
     public FlightValidatorServiceImpl(@Qualifier("distanceRuleService") final RuleValidatorService distanceRuleService,
-                                      @Qualifier("distanceRuleService") final RuleValidatorService takeOffRuleService,
-                                      @Qualifier("distanceRuleService") final RuleValidatorService westDestinationRuleService) {
+                                      @Qualifier("takeOffRuleService") final RuleValidatorService takeOffRuleService,
+                                      @Qualifier("westDestinationRuleService") final RuleValidatorService westDestinationRuleService) {
         this.distanceRuleService = distanceRuleService;
         this.takeOffRuleService = takeOffRuleService;
         this.westDestinationRuleService = westDestinationRuleService;
@@ -30,16 +31,16 @@ public class FlightValidatorServiceImpl implements FlightValidatorService {
 
     @Override
     public ValidatedFlightDTO validateFlight(final Flight flight) {
-        final ValidatedFlightDTO flightDTO = new ValidatedFlightDTO(flight, this.calculateDistance(flight));
+        final ValidatedFlightDTO flightDTO = new ValidatedFlightDTO(flight, this.calculateDistance(flight.getTravel()));
         this.evaluateFeasible(flightDTO);
         return flightDTO;
     }
 
-    private double calculateDistance(final Flight flight) {
-        return FlightUtils.getHaversineDistance(flight.getDepartureLatitude(),
-                flight.getArrivalLongitude(),
-                flight.getDepartureLatitude(),
-                flight.getDepartureLongitude());
+    private double calculateDistance(final Travel travel) {
+        return FlightUtils.getHaversineDistance(travel.getDepartureLatitude(),
+                travel.getArrivalLongitude(),
+                travel.getDepartureLatitude(),
+                travel.getDepartureLongitude());
     }
 
     @SuppressWarnings("java:S3878")

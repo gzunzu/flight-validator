@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gzunzu.flightvalidator.domain.configuration.WestDestinationRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
+import org.gzunzu.flightvalidator.domain.model.Travel;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
@@ -22,11 +23,11 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
 
     @Override
     public boolean mustComply(final Flight flight) {
-        return this.isFlightHeadingWest(flight.getDepartureLongitude(), flight.getArrivalLongitude());
+        return this.isFlightHeadingWest(flight.getTravel());
     }
 
-    private boolean isFlightHeadingWest(final double departureLongitude, final double arrivalLongitude) {
-        return FlightUtils.getShortestDistance(departureLongitude, arrivalLongitude) < 0;
+    private boolean isFlightHeadingWest(final Travel travel) {
+        return FlightUtils.getShortestDistance(travel.getDepartureLongitude(), travel.getArrivalLongitude()) < 0;
     }
 
     @Override

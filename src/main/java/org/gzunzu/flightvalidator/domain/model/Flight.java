@@ -1,18 +1,17 @@
 package org.gzunzu.flightvalidator.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 import java.time.LocalTime;
 
@@ -27,38 +26,22 @@ public class Flight implements Serializable {
     private static final long serialVersionUID = 987654321L;
 
     @JsonProperty("flightNumber")
-    @NotBlank
+    @Pattern(regexp = "^[A-Z]{3}\\d{3}[A-Z]{1}$", message = "Flight number must be formed by 3 uppercase letters, " +
+            "followed by 3 digits and another additional uppercase letter.")
     private String flightNumber;
 
     @JsonProperty("paxCount")
-    @PositiveOrZero
-    private short paxCount;
+    @NotNull(message = "Pax count (paxCount) should not be null")
+    @PositiveOrZero(message = "Pax count should be a positive integer, or zero.")
+    private Short paxCount;
 
     @JsonProperty("takeOffTime")
-    @NotNull
+    @NotNull(message = "Take-off time should not be null.")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime takeOffTime;
 
-    @JsonProperty("departureLatitude")
-    @NotNull
-    @Max(value = 90, message = "Departure latitude value cannot be greater than 90.")
-    @Min(value = -90, message = "Departure latitude value cannot be less than -90.")
-    private double departureLatitude;
-
-    @JsonProperty("departureLongitude")
-    @NotNull
-    @Max(value = 180, message = "Departure longitude value cannot be greater than 180.")
-    @Min(value = -180, message = "Departure longitude value cannot be less than -180.")
-    private double departureLongitude;
-
-    @JsonProperty("arrivalLatitude")
-    @NotNull
-    @Max(value = 90, message = "Departure latitude value cannot be greater than 90.")
-    @Min(value = -90, message = "Departure latitude value cannot be less than -90.")
-    private double arrivalLatitude;
-
-    @JsonProperty("arrivalLongitude")
-    @NotNull
-    @Max(value = 180, message = "Arrival longitude value cannot be greater than 180.")
-    @Min(value = -180, message = "Arrival longitude value cannot be less than -180.")
-    private double arrivalLongitude;
+    @JsonProperty("travel")
+    @NotNull(message = "Travel data (departure and arrival Lat and Long values) should not be null.")
+    @Valid
+    private Travel travel;
 }
