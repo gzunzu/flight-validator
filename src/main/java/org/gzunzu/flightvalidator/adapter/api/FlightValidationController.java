@@ -1,5 +1,6 @@
 package org.gzunzu.flightvalidator.adapter.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
@@ -24,7 +25,12 @@ public class FlightValidationController {
 
     private final FlightValidatorService flightValidatorService;
 
-    @GetMapping(value = "/validate")
+    @Operation(summary = "Validate flight",
+            description = "Evaluates if a flight is feasible given departure and arribal location, paxes count and departure time, " +
+                    "considering several custom defined rules.\nTake off time can be provided as a simple string in «HH:mm» format.")
+    @GetMapping(value = "/validate",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ValidatedFlightDTO> validate(@RequestBody @Valid final Flight flight) {
         final ValidatedFlightDTO validatedFlightDTO = this.flightValidatorService.validateFlight(flight);
         return ResponseEntity.ofNullable(validatedFlightDTO);
