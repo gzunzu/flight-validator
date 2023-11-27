@@ -1,5 +1,7 @@
 package org.gzunzu.flightvalidator.domain.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,14 +9,16 @@ import java.io.Serializable;
 import java.util.EnumMap;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class ValidatedFlightDTO implements Serializable {
 
     private static final long serialVersionUID = 123456789L;
 
-    private final Flight flight;
+    private Flight flight;
 
-    private final double distance;
-    private final EnumMap<RuleValidationMessage, String> validationMessages;
+    private double distance;
+    private EnumMap<RuleValidationMessage, String> validationMessages;
     @Setter
     private Boolean feasible;
 

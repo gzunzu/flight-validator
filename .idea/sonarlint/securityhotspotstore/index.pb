@@ -136,3 +136,9 @@ w
 G.idea/sonarlint/issuestore/1/9/197208a9e0460d20d31ab1efb66ae7d8f28cbef8,d\a\dac9bf584cc40bd589e28c4e29b5a0974021a6e9
 w
 G.idea/sonarlint/issuestore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302,e\d\ed67eb178d523a4b3f117dcbe0eda5196367ceec
+†
+Vsrc/main/java/org/gzunzu/flightvalidator/domain/exceptions/GlobalExceptionHandler.java,7\0\70c5a35178eaf9c1e182a14c799d4e2ce9740680
+]
+-.idea/sonarlint/securityhotspotstore/index.pb,8\8\88a9255124c95bdc913197c120a8d560edc59c8e
+S
+#.idea/sonarlint/issuestore/index.pb,9\f\9fe84ebb15faf917b7def6236dba604453cc61e0

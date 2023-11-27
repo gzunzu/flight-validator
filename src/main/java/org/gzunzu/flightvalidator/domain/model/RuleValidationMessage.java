@@ -14,6 +14,7 @@ public enum RuleValidationMessage {
     TAKEOFF_MAXIMUM_RANGE("Flights taking off after %s:00 h can only travel %s km. Provided flight takes off at %s:00 h and distance is %s km."),
     WEST_TAKEOFF_LIMIT("Flights going West must take off before %s:00 h. Provided flight takes off at %s:00 h."),
     WEST_MAXIMUM_RANGE("Flights heading west should not travel further than %s km. Provided flight distance is %s km."),
+    UNPROCESSABLE_ENTITY("Not valid flight configuration values provided: %s"),
     UNEXPECTED_ERROR("Something went wrong while validating flight configuration values.");
 
     private final String message;
