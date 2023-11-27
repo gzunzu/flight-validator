@@ -2,14 +2,18 @@ package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.TakeOffRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
+import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
 
 @Service
 @Qualifier("takeOffRuleService")
@@ -29,8 +33,9 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
     }
 
     @Override
+    @SuppressWarnings("java:S3878")
     public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
-        return this.validateNoTakeOffHour(flightDTO) && this.validateLimitedDistanceByTakeOffHour(flightDTO);
+        return BooleanUtils.and(new boolean[]{this.validateNoTakeOffHour(flightDTO), this.validateLimitedDistanceByTakeOffHour(flightDTO)});
     }
 
     private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
@@ -38,8 +43,8 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.TAKEOFF_LIMIT,
-                    this.ruleValues.getNoTakeOffHour(),
-                    flightDTO.getFlight().getTakeOffTime().getHour());
+                    FlightUtils.format(LocalTime.of(this.ruleValues.getNoTakeOffHour(), 0)),
+                    FlightUtils.format(flightDTO.getFlight().getTakeOffTime()));
         }
         return isCompliant;
     }
@@ -49,9 +54,9 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.TAKEOFF_MAXIMUM_RANGE,
-                    this.ruleValues.getLimitedDistanceTakeOffHour(),
+                    FlightUtils.format(LocalTime.of(this.ruleValues.getLimitedDistanceTakeOffHour(), 0)),
                     this.ruleValues.getLimitedKm(),
-                    flightDTO.getFlight().getTakeOffTime().getHour(),
+                    FlightUtils.format(flightDTO.getFlight().getTakeOffTime()),
                     flightDTO.getDistance());
         }
         return isCompliant;

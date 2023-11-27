@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 public class DistanceRuleConfiguration {
 
     @Value("${maxKm:12000}")
-    private int maxKm;
+    private double maxKm;
 
     @Value("${paxThreshold:250}")
     private short paxThreshold;
 
     @Value("${limitedByPaxKm:8000}")
-    private int limitedByPaxKm;
+    private double limitedByPaxKm;
 }

@@ -1,5 +1,6 @@
 package org.gzunzu.flightvalidator.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,12 +16,15 @@ public class ValidatedFlightDTO implements Serializable {
 
     private static final long serialVersionUID = 123456789L;
 
-    private Flight flight;
-
-    private Double distance;
-    private EnumMap<RuleValidationMessage, String> validationMessages;
     @Setter
+    @JsonProperty("feasible")
     private Boolean feasible;
+    @JsonProperty("validationMessages")
+    private EnumMap<RuleValidationMessage, String> validationMessages;
+    @JsonProperty("distance")
+    private Double distance;
+    @JsonProperty("flight")
+    private Flight flight;
 
     public ValidatedFlightDTO(final Flight flight, final Double distance) {
         this.flight = flight;

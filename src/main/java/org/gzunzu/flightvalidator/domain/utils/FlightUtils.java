@@ -3,10 +3,20 @@ package org.gzunzu.flightvalidator.domain.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FlightUtils {
 
-    private static final int R = 6371;
+    private static final int R;
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER;
+
+    static {
+        R = 6371;
+        DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    }
 
     private static Double toRad(final Double value) {
         return value * Math.PI / 180;
@@ -34,5 +44,9 @@ public class FlightUtils {
         double distanceWest = departureLongitude - arrivalLongitude;
 
         return Math.min(distanceEast, distanceWest);
+    }
+
+    public static String format(final LocalTime localTime) {
+        return DATE_TIME_FORMATTER.format(localTime);
     }
 }

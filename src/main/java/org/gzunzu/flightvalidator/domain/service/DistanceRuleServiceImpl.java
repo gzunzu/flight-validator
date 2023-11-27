@@ -2,6 +2,7 @@ package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.DistanceRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
@@ -26,7 +27,7 @@ public class DistanceRuleServiceImpl implements RuleValidatorService {
 
     @Override
     public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
-        return this.validateBasicDistance(flightDTO) && this.validatePaxLimitedDistance(flightDTO);
+        return BooleanUtils.and(new boolean[]{this.validateBasicDistance(flightDTO), this.validatePaxLimitedDistance(flightDTO)});
     }
 
     private boolean validateBasicDistance(final ValidatedFlightDTO flightDTO) {

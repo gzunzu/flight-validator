@@ -2,6 +2,7 @@ package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.WestDestinationRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
@@ -12,6 +13,8 @@ import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
 
 @Service
 @Qualifier("westDestinationRuleService")
@@ -31,8 +34,9 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
     }
 
     @Override
+    @SuppressWarnings("java:S3878")
     public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
-        return this.validateNoTakeOffHour(flightDTO) && this.validateLimitedDistance(flightDTO);
+        return BooleanUtils.and(new boolean[]{this.validateNoTakeOffHour(flightDTO), this.validateLimitedDistance(flightDTO)});
     }
 
     private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
@@ -40,8 +44,8 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.WEST_TAKEOFF_LIMIT,
-                    this.ruleValues.getNoTakeOffHour(),
-                    flightDTO.getFlight().getTakeOffTime().getHour());
+                    FlightUtils.format(LocalTime.of(this.ruleValues.getNoTakeOffHour(), 0)),
+                    FlightUtils.format(flightDTO.getFlight().getTakeOffTime()));
         }
         return isCompliant;
     }

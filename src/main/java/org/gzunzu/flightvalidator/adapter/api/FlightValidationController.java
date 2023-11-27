@@ -26,7 +26,7 @@ public class FlightValidationController {
 
     @GetMapping(value = "/validate")
     public ResponseEntity<ValidatedFlightDTO> validate(@RequestBody @Valid final Flight flight) {
-        ValidatedFlightDTO validatedFlightDTO = this.flightValidatorService.validateFlight(flight);
+        final ValidatedFlightDTO validatedFlightDTO = this.flightValidatorService.validateFlight(flight);
         return ResponseEntity.ofNullable(validatedFlightDTO);
     }
 }

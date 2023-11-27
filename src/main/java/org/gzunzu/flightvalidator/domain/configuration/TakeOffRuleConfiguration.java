@@ -17,5 +17,5 @@ public class TakeOffRuleConfiguration {
     private short limitedDistanceTakeOffHour;
 
     @Value("${limitedKm:9000}")
-    private int limitedKm;
+    private double limitedKm;
 }

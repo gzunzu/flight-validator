@@ -14,5 +14,5 @@ public class WestDestinationRuleConfiguration {
     private short noTakeOffHour;
 
     @Value("${limitedKm:3000}")
-    private int limitedKm;
+    private double limitedKm;
 }
