@@ -2,9 +2,9 @@ package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.gzunzu.flightvalidator.domain.model.Coordinates;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.Travel;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
 import org.gzunzu.flightvalidator.domain.ports.FlightValidatorService;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
@@ -31,16 +31,16 @@ public class FlightValidatorServiceImpl implements FlightValidatorService {
 
     @Override
     public ValidatedFlightDTO validateFlight(final Flight flight) {
-        final ValidatedFlightDTO flightDTO = new ValidatedFlightDTO(flight, this.calculateDistance(flight.getTravel()));
+        final ValidatedFlightDTO flightDTO = new ValidatedFlightDTO(flight, this.calculateDistance(flight.getCoordinates()));
         this.evaluateFeasible(flightDTO);
         return flightDTO;
     }
 
-    private double calculateDistance(final Travel travel) {
-        return FlightUtils.getHaversineDistance(travel.getDepartureLatitude(),
-                travel.getArrivalLongitude(),
-                travel.getDepartureLatitude(),
-                travel.getDepartureLongitude());
+    private double calculateDistance(final Coordinates coordinates) {
+        return FlightUtils.getHaversineDistance(coordinates.getDepartureLatitude(),
+                coordinates.getArrivalLongitude(),
+                coordinates.getDepartureLatitude(),
+                coordinates.getDepartureLongitude());
     }
 
     @SuppressWarnings("java:S3878")

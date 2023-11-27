@@ -4,17 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.WestDestinationRuleConfiguration;
+import org.gzunzu.flightvalidator.domain.model.Coordinates;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.Travel;
 import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalTime;
 
 @Service
 @Qualifier("westDestinationRuleService")
@@ -26,11 +24,11 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
 
     @Override
     public boolean mustComply(final Flight flight) {
-        return this.isFlightHeadingWest(flight.getTravel());
+        return this.isFlightHeadingWest(flight.getCoordinates());
     }
 
-    private boolean isFlightHeadingWest(final Travel travel) {
-        return FlightUtils.getShortestDistance(travel.getDepartureLongitude(), travel.getArrivalLongitude()) < 0;
+    private boolean isFlightHeadingWest(final Coordinates coordinates) {
+        return FlightUtils.isHeadingWest(coordinates.getDepartureLongitude(), coordinates.getArrivalLongitude());
     }
 
     @Override
@@ -40,11 +38,11 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
     }
 
     private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
-        final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().getHour() < this.ruleValues.getNoTakeOffHour();
+        final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getNoTakeOffHour());
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.WEST_TAKEOFF_LIMIT,
-                    FlightUtils.format(LocalTime.of(this.ruleValues.getNoTakeOffHour(), 0)),
+                    FlightUtils.format(this.ruleValues.getNoTakeOffHour()),
                     FlightUtils.format(flightDTO.getFlight().getTakeOffTime()));
         }
         return isCompliant;

@@ -4,9 +4,9 @@ validation-rules:
     paxThreshold: 250
     limitedByPaxKm: 8000
   take-off:
-    noTakeOffHour: 20
-    limitedDistanceTakeOffHour: 14
+    noTakeOffHour: '20:00'
+    limitedDistanceTakeOffHour: '14:00'
     limitedKm: 9000
   west-destination:
-    noTakeOffHour: 15
+    noTakeOffHour: '15:00'
     limitedKm: 3000

@@ -36,12 +36,11 @@ public class Flight implements Serializable {
     private Short paxCount;
 
     @JsonProperty("takeOffTime")
-    @NotNull(message = "Take-off time should not be null.")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime takeOffTime;
 
-    @JsonProperty("travel")
-    @NotNull(message = "Travel data (departure and arrival Lat and Long values) should not be null.")
+    @JsonProperty("coordinates")
+    @NotNull(message = "Coordinates data (departure and arrival Lat and Long values) should not be null.")
     @Valid
-    private Travel travel;
+    private Coordinates coordinates;
 }

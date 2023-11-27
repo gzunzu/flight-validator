@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Valid
-public class Travel implements Serializable {
+public class Coordinates implements Serializable {
 
     private static final long serialVersionUID = 111111111L;
 

@@ -2,15 +2,16 @@ package org.gzunzu.flightvalidator.domain.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public class FlightUtils {
 
     private static final int R;
-
     private static final DateTimeFormatter DATE_TIME_FORMATTER;
 
     static {
@@ -32,21 +33,32 @@ public class FlightUtils {
     }
 
     /**
-     * Calculate the shortest distance considering the possibility of crossing the International Date Line
+     * Evaluates if the shortest path to go from a departure longitude point to another one is traveling west. International Reference Meridian and
+     * negative longitud values are considered.
      *
-     * @param departureLongitude departure longitude.
-     * @param arrivalLongitude   arrival longitude.
-     * @return the shortest difference between the provided longitudes.
-     * If flight is going west, distance will be a negative value.
+     * @param departureLongitude the longitude from which we start,
+     * @param arrivalLongitude   the longitud to go to.
+     * @return true if the shortest path is heading west; false if not, or if it's the same distance because points are oposite sides.
      */
-    public static double getShortestDistance(double departureLongitude, double arrivalLongitude) {
-        double distanceEast = arrivalLongitude - departureLongitude;
-        double distanceWest = departureLongitude - arrivalLongitude;
-
-        return Math.min(distanceEast, distanceWest);
+    public static boolean isHeadingWest(final double departureLongitude, final double arrivalLongitude) {
+        boolean isHeadingWest = false;
+        if (departureLongitude >= 0 && arrivalLongitude >= 0) {
+            isHeadingWest = departureLongitude - arrivalLongitude >= 0;
+        } else if (departureLongitude < 0 && arrivalLongitude <= 0) {
+            isHeadingWest = arrivalLongitude - departureLongitude <= 0;
+        } else if (departureLongitude >= 0 && arrivalLongitude < 0) {
+            isHeadingWest = departureLongitude - arrivalLongitude < 180;
+        } else if (departureLongitude < 0 && arrivalLongitude >= 0) {
+            isHeadingWest = arrivalLongitude - departureLongitude > 180;
+        }
+        return isHeadingWest;
     }
 
     public static String format(final LocalTime localTime) {
         return DATE_TIME_FORMATTER.format(localTime);
+    }
+
+    public static LocalTime format(final String localTime) {
+        return LocalTime.parse(localTime);
     }
 }

@@ -13,8 +13,6 @@ import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
-
 @Service
 @Qualifier("takeOffRuleService")
 @Slf4j
@@ -29,7 +27,7 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
     }
 
     private boolean evaluateTakeOffHour(final Flight flight) {
-        return flight.getTakeOffTime().getHour() >= this.ruleValues.getLimitedDistanceTakeOffHour();
+        return !this.ruleValues.getLimitedDistanceTakeOffHour().isAfter(flight.getTakeOffTime());
     }
 
     @Override
@@ -39,22 +37,23 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
     }
 
     private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
-        final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().getHour() < this.ruleValues.getNoTakeOffHour();
+        final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getNoTakeOffHour());
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.TAKEOFF_LIMIT,
-                    FlightUtils.format(LocalTime.of(this.ruleValues.getNoTakeOffHour(), 0)),
+                    FlightUtils.format(this.ruleValues.getNoTakeOffHour()),
                     FlightUtils.format(flightDTO.getFlight().getTakeOffTime()));
         }
         return isCompliant;
     }
 
     private boolean validateLimitedDistanceByTakeOffHour(final ValidatedFlightDTO flightDTO) {
-        final boolean isCompliant = flightDTO.getDistance() <= this.ruleValues.getLimitedKm();
+        final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getLimitedDistanceTakeOffHour())
+                || flightDTO.getDistance() <= this.ruleValues.getLimitedKm();
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
                     RuleValidationMessage.TAKEOFF_MAXIMUM_RANGE,
-                    FlightUtils.format(LocalTime.of(this.ruleValues.getLimitedDistanceTakeOffHour(), 0)),
+                    FlightUtils.format(this.ruleValues.getLimitedDistanceTakeOffHour()),
                     this.ruleValues.getLimitedKm(),
                     FlightUtils.format(flightDTO.getFlight().getTakeOffTime()),
                     flightDTO.getDistance());
