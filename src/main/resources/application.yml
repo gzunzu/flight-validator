@@ -14,3 +14,10 @@ validation-rules:
 springdoc:
   api-docs:
     path: '/api-docs'
+
+integration:
+  geoapify:
+    name: geoapify
+    url: https://api.geoapify.com
+    api: /v1
+    key: 1490681050864d39aab8254a3f08079b
