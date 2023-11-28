@@ -1,7 +1,7 @@
 package org.gzunzu.flightvalidator.domain.utils;
 
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,13 +15,13 @@ class ValidationUtilsTest {
 
     @Test
     void test_addValidationMessage() {
-        final ValidatedFlightDTO validatedFlightDTO = ValidatedFlightDTO.builder()
+        final ValidationDTO validationDTO = ValidationDTO.builder()
                 .validationMessages(new EnumMap<>(RuleValidationMessage.class))
                 .build();
 
-        ValidationUtils.addValidationMessage(validatedFlightDTO, RuleValidationMessage.VALID);
+        ValidationUtils.addValidationMessage(validationDTO, RuleValidationMessage.VALID);
 
-        assertThat(validatedFlightDTO.getValidationMessages()).isNotEmpty();
-        assertThat(validatedFlightDTO.getValidationMessages().values()).contains(RuleValidationMessage.VALID.getMessage());
+        assertThat(validationDTO.getValidationMessages()).isNotEmpty();
+        assertThat(validationDTO.getValidationMessages().values()).contains(RuleValidationMessage.VALID.getMessage());
     }
 }

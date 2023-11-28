@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gzunzu.flightvalidator.domain.configuration.DistanceRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,11 +67,11 @@ class DistanceRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"11000,100", "7999,251", "8001,250"})
     void test_isCompliant_true(final double distance, final short paxCount) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, paxCount);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, paxCount);
 
         this.mockRuleValues();
 
-        final boolean result = this.distanceRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.distanceRuleService.isCompliant(validationDTO);
 
         assertThat(result).isTrue();
     }
@@ -79,20 +79,20 @@ class DistanceRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"11000,251", "13000,250", "8001,251"})
     void test_isCompliant_false(final double distance, final short paxCount) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, paxCount);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, paxCount);
 
         this.mockRuleValues();
 
-        final boolean result = this.distanceRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.distanceRuleService.isCompliant(validationDTO);
 
         assertThat(result).isFalse();
     }
 
-    private ValidatedFlightDTO initializeValidatedFlightDTO(final double distance, final short paxCount) {
+    private ValidationDTO initializeValidatedFlightDTO(final double distance, final short paxCount) {
         final Flight flight = Flight.builder()
                 .paxCount(paxCount)
                 .build();
-        return ValidatedFlightDTO.builder()
+        return ValidationDTO.builder()
                 .flight(flight)
                 .distance(distance)
                 .feasible(false)

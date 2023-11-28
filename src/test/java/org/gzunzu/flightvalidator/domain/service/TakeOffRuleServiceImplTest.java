@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gzunzu.flightvalidator.domain.configuration.TakeOffRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,11 +86,11 @@ class TakeOffRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"20000,10:00", "20000,00:00", "9000,14:00", "8999,13:59", "9000,19:59"})
     void test_isCompliant_true(final double distance, final LocalTime takeOffTime) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
 
         this.mockRuleValues();
 
-        final boolean result = this.takeOffRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.takeOffRuleService.isCompliant(validationDTO);
 
         assertThat(result).isTrue();
     }
@@ -98,20 +98,20 @@ class TakeOffRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"1,20:00", "9001,14:00"})
     void test_isCompliant_false(final double distance, final LocalTime takeOffTime) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
 
         this.mockRuleValues();
 
-        final boolean result = this.takeOffRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.takeOffRuleService.isCompliant(validationDTO);
 
         assertThat(result).isFalse();
     }
 
-    private ValidatedFlightDTO initializeValidatedFlightDTO(final double distance, final LocalTime takeOffTime) {
+    private ValidationDTO initializeValidatedFlightDTO(final double distance, final LocalTime takeOffTime) {
         final Flight flight = Flight.builder()
                 .takeOffTime(takeOffTime)
                 .build();
-        return ValidatedFlightDTO.builder()
+        return ValidationDTO.builder()
                 .flight(flight)
                 .distance(distance)
                 .feasible(false)

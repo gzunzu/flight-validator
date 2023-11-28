@@ -6,7 +6,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.TakeOffRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
@@ -32,11 +32,11 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
 
     @Override
     @SuppressWarnings("java:S3878")
-    public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
+    public boolean isCompliant(final ValidationDTO flightDTO) {
         return BooleanUtils.and(new boolean[]{this.validateNoTakeOffHour(flightDTO), this.validateLimitedDistanceByTakeOffHour(flightDTO)});
     }
 
-    private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
+    private boolean validateNoTakeOffHour(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getNoTakeOffHour());
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
@@ -47,7 +47,7 @@ public class TakeOffRuleServiceImpl implements RuleValidatorService {
         return isCompliant;
     }
 
-    private boolean validateLimitedDistanceByTakeOffHour(final ValidatedFlightDTO flightDTO) {
+    private boolean validateLimitedDistanceByTakeOffHour(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getLimitedDistanceTakeOffHour())
                 || flightDTO.getDistance() <= this.ruleValues.getLimitedKm();
         if (!isCompliant) {

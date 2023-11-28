@@ -1,7 +1,7 @@
 package org.gzunzu.flightvalidator.domain.ports;
 
 import org.gzunzu.flightvalidator.domain.model.Flight;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 
 /**
  * Rule validator service.
@@ -22,5 +22,5 @@ public interface RuleValidatorService {
      * @param flightDTO the flight validation DTO containing the flight to validate.
      * @return true if the flight is feasible; false otherwise.
      */
-    boolean isCompliant(final ValidatedFlightDTO flightDTO);
+    boolean isCompliant(final ValidationDTO flightDTO);
 }

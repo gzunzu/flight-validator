@@ -6,7 +6,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.DistanceRuleConfiguration;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,11 +26,11 @@ public class DistanceRuleServiceImpl implements RuleValidatorService {
     }
 
     @Override
-    public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
+    public boolean isCompliant(final ValidationDTO flightDTO) {
         return BooleanUtils.and(new boolean[]{this.validateBasicDistance(flightDTO), this.validatePaxLimitedDistance(flightDTO)});
     }
 
-    private boolean validateBasicDistance(final ValidatedFlightDTO flightDTO) {
+    private boolean validateBasicDistance(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getDistance() <= this.ruleValues.getMaxKm();
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
@@ -41,7 +41,7 @@ public class DistanceRuleServiceImpl implements RuleValidatorService {
         return isCompliant;
     }
 
-    private boolean validatePaxLimitedDistance(final ValidatedFlightDTO flightDTO) {
+    private boolean validatePaxLimitedDistance(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getFlight().getPaxCount() <= this.ruleValues.getPaxThreshold()
                 || flightDTO.getDistance() <= this.ruleValues.getLimitedByPaxKm();
         if (!isCompliant) {

@@ -1,9 +1,11 @@
 package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.gzunzu.flightvalidator.domain.model.Cardinal;
 import org.gzunzu.flightvalidator.domain.model.Coordinates;
+import org.gzunzu.flightvalidator.domain.model.Direction;
 import org.gzunzu.flightvalidator.domain.model.Flight;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,10 @@ class FlightValidatorServiceImplTest {
     @Test
     void test_validateFlight_valid_mustNotComplyAny() {
         final Coordinates coordinates = new Coordinates(0d, 0d, 0d, 0d);
+        final Direction direction = Direction.builder()
+                .lat(Cardinal.NORTH)
+                .lng(Cardinal.EAST)
+                .build();
         final Flight flight = Flight.builder()
                 .coordinates(coordinates)
                 .build();
@@ -62,8 +68,10 @@ class FlightValidatorServiceImplTest {
         try (MockedStatic<FlightUtils> flightUtilsMockedStatic = Mockito.mockStatic(FlightUtils.class)) {
             flightUtilsMockedStatic.when(() -> FlightUtils.getHaversineDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
                     .thenReturn(0d);
+            flightUtilsMockedStatic.when(() -> FlightUtils.getDirection(eq(coordinates)))
+                    .thenReturn(direction);
 
-            final ValidatedFlightDTO result = this.flightValidatorService.validateFlight(flight);
+            final ValidationDTO result = this.flightValidatorService.validateFlight(flight);
 
             assertThat(result.getFeasible()).isTrue();
         }
@@ -72,6 +80,10 @@ class FlightValidatorServiceImplTest {
     @Test
     void test_validateFlight_valid_mustComplyAll_noneValid() {
         final Coordinates coordinates = new Coordinates(0d, 0d, 0d, 0d);
+        final Direction direction = Direction.builder()
+                .lat(Cardinal.NORTH)
+                .lng(Cardinal.WEST)
+                .build();
         final Flight flight = Flight.builder()
                 .coordinates(coordinates)
                 .build();
@@ -82,18 +94,20 @@ class FlightValidatorServiceImplTest {
                 .thenReturn(true);
         when(this.westDestinationRuleService.mustComply(eq(flight)))
                 .thenReturn(true);
-        when(this.distanceRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.distanceRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(false);
-        when(this.takeOffRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.takeOffRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(false);
-        when(this.westDestinationRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.westDestinationRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(false);
 
         try (MockedStatic<FlightUtils> flightUtilsMockedStatic = Mockito.mockStatic(FlightUtils.class)) {
             flightUtilsMockedStatic.when(() -> FlightUtils.getHaversineDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
                     .thenReturn(0d);
+            flightUtilsMockedStatic.when(() -> FlightUtils.getDirection(eq(coordinates)))
+                    .thenReturn(direction);
 
-            final ValidatedFlightDTO result = this.flightValidatorService.validateFlight(flight);
+            final ValidationDTO result = this.flightValidatorService.validateFlight(flight);
 
             assertThat(result.getFeasible()).isFalse();
         }
@@ -102,6 +116,10 @@ class FlightValidatorServiceImplTest {
     @Test
     void test_validateFlight_valid_mustComplyAll_allValid() {
         final Coordinates coordinates = new Coordinates(0d, 0d, 0d, 0d);
+        final Direction direction = Direction.builder()
+                .lat(Cardinal.NORTH)
+                .lng(Cardinal.WEST)
+                .build();
         final Flight flight = Flight.builder()
                 .coordinates(coordinates)
                 .build();
@@ -112,18 +130,20 @@ class FlightValidatorServiceImplTest {
                 .thenReturn(true);
         when(this.westDestinationRuleService.mustComply(eq(flight)))
                 .thenReturn(true);
-        when(this.distanceRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.distanceRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(true);
-        when(this.takeOffRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.takeOffRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(true);
-        when(this.westDestinationRuleService.isCompliant(any(ValidatedFlightDTO.class)))
+        when(this.westDestinationRuleService.isCompliant(any(ValidationDTO.class)))
                 .thenReturn(true);
 
         try (MockedStatic<FlightUtils> flightUtilsMockedStatic = Mockito.mockStatic(FlightUtils.class)) {
             flightUtilsMockedStatic.when(() -> FlightUtils.getHaversineDistance(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
                     .thenReturn(0d);
+            flightUtilsMockedStatic.when(() -> FlightUtils.getDirection(eq(coordinates)))
+                    .thenReturn(direction);
 
-            final ValidatedFlightDTO result = this.flightValidatorService.validateFlight(flight);
+            final ValidationDTO result = this.flightValidatorService.validateFlight(flight);
 
             assertThat(result.getFeasible()).isTrue();
         }

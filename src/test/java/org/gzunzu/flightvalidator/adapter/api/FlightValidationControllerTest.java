@@ -2,7 +2,7 @@ package org.gzunzu.flightvalidator.adapter.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gzunzu.flightvalidator.domain.model.Flight;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.FlightValidatorService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ class FlightValidationControllerTest {
         when(this.flightValidatorService.validateFlight(eq(flight)))
                 .thenReturn(null);
 
-        final ResponseEntity<ValidatedFlightDTO> result = this.controller.validate(flight);
+        final ResponseEntity<ValidationDTO> result = this.controller.validate(flight);
 
         assertThat(result).isNotNull();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -44,15 +44,15 @@ class FlightValidationControllerTest {
     @Test
     void test_validate_notNullResponse() {
         final Flight flight = mock(Flight.class);
-        final ValidatedFlightDTO validatedFlightDTO = mock(ValidatedFlightDTO.class);
+        final ValidationDTO validationDTO = mock(ValidationDTO.class);
 
         when(this.flightValidatorService.validateFlight(eq(flight)))
-                .thenReturn(validatedFlightDTO);
+                .thenReturn(validationDTO);
 
-        final ResponseEntity<ValidatedFlightDTO> result = this.controller.validate(flight);
+        final ResponseEntity<ValidationDTO> result = this.controller.validate(flight);
 
         assertThat(result).isNotNull();
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isEqualTo(validatedFlightDTO);
+        assertThat(result.getBody()).isEqualTo(validationDTO);
     }
 }

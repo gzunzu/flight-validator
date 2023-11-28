@@ -2,10 +2,12 @@ package org.gzunzu.flightvalidator.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gzunzu.flightvalidator.domain.configuration.WestDestinationRuleConfiguration;
+import org.gzunzu.flightvalidator.domain.model.Cardinal;
 import org.gzunzu.flightvalidator.domain.model.Coordinates;
+import org.gzunzu.flightvalidator.domain.model.Direction;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +26,7 @@ import java.time.LocalTime;
 import java.util.EnumMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 
 @Slf4j
@@ -65,13 +67,16 @@ class WestDestinationRuleServiceImplTest {
                 .arrivalLatitude(0d)
                 .arrivalLongitude(0d)
                 .build();
+        final Direction direction = Direction.builder()
+                .lng(Cardinal.WEST)
+                .build();
         final Flight flight = Flight.builder()
                 .coordinates(coordinates)
                 .build();
 
         try (MockedStatic<FlightUtils> flightUtilsMockedStatic = Mockito.mockStatic(FlightUtils.class)) {
-            flightUtilsMockedStatic.when(() -> FlightUtils.isHeadingWest(anyDouble(), anyDouble()))
-                    .thenReturn(true);
+            flightUtilsMockedStatic.when(() -> FlightUtils.getDirection(eq(coordinates)))
+                    .thenReturn(direction);
 
             final boolean result = this.westDestinationRuleService.mustComply(flight);
             assertThat(result).isTrue();
@@ -86,13 +91,16 @@ class WestDestinationRuleServiceImplTest {
                 .arrivalLatitude(0d)
                 .arrivalLongitude(0d)
                 .build();
+        final Direction direction = Direction.builder()
+                .lng(Cardinal.EAST)
+                .build();
         final Flight flight = Flight.builder()
                 .coordinates(coordinates)
                 .build();
 
         try (MockedStatic<FlightUtils> flightUtilsMockedStatic = Mockito.mockStatic(FlightUtils.class)) {
-            flightUtilsMockedStatic.when(() -> FlightUtils.isHeadingWest(anyDouble(), anyDouble()))
-                    .thenReturn(false);
+            flightUtilsMockedStatic.when(() -> FlightUtils.getDirection(eq(coordinates)))
+                    .thenReturn(direction);
 
             final boolean result = this.westDestinationRuleService.mustComply(flight);
             assertThat(result).isFalse();
@@ -102,11 +110,11 @@ class WestDestinationRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"3000,14:59", "3000,00:00"})
     void test_isCompliant_true(final double distance, final LocalTime takeOffTime) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
 
         this.mockRuleValues();
 
-        final boolean result = this.westDestinationRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.westDestinationRuleService.isCompliant(validationDTO);
 
         assertThat(result).isTrue();
     }
@@ -114,20 +122,20 @@ class WestDestinationRuleServiceImplTest {
     @ParameterizedTest
     @CsvSource({"3001,14:59", "2999,15:00"})
     void test_isCompliant_false(final double distance, final LocalTime takeOffTime) {
-        final ValidatedFlightDTO validatedFlightDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
+        final ValidationDTO validationDTO = this.initializeValidatedFlightDTO(distance, takeOffTime);
 
         this.mockRuleValues();
 
-        final boolean result = this.westDestinationRuleService.isCompliant(validatedFlightDTO);
+        final boolean result = this.westDestinationRuleService.isCompliant(validationDTO);
 
         assertThat(result).isFalse();
     }
 
-    private ValidatedFlightDTO initializeValidatedFlightDTO(final double distance, final LocalTime takeOffTime) {
+    private ValidationDTO initializeValidatedFlightDTO(final double distance, final LocalTime takeOffTime) {
         final Flight flight = Flight.builder()
                 .takeOffTime(takeOffTime)
                 .build();
-        return ValidatedFlightDTO.builder()
+        return ValidationDTO.builder()
                 .flight(flight)
                 .distance(distance)
                 .feasible(false)
