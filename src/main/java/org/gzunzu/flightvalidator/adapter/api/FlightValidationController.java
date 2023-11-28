@@ -3,7 +3,7 @@ package org.gzunzu.flightvalidator.adapter.api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.gzunzu.flightvalidator.domain.model.Flight;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.FlightValidatorService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +31,8 @@ public class FlightValidationController {
     @GetMapping(value = "/validate",
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ValidatedFlightDTO> validate(@RequestBody @Valid final Flight flight) {
-        final ValidatedFlightDTO validatedFlightDTO = this.flightValidatorService.validateFlight(flight);
-        return ResponseEntity.ofNullable(validatedFlightDTO);
+    public ResponseEntity<ValidationDTO> validate(@RequestBody @Valid final Flight flight) {
+        final ValidationDTO validationDTO = this.flightValidatorService.validateFlight(flight);
+        return ResponseEntity.ofNullable(validationDTO);
     }
 }

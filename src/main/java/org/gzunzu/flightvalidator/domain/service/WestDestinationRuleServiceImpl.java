@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.gzunzu.flightvalidator.domain.configuration.WestDestinationRuleConfiguration;
+import org.gzunzu.flightvalidator.domain.model.Cardinal;
 import org.gzunzu.flightvalidator.domain.model.Coordinates;
 import org.gzunzu.flightvalidator.domain.model.Flight;
 import org.gzunzu.flightvalidator.domain.model.RuleValidationMessage;
-import org.gzunzu.flightvalidator.domain.model.ValidatedFlightDTO;
+import org.gzunzu.flightvalidator.domain.model.ValidationDTO;
 import org.gzunzu.flightvalidator.domain.ports.RuleValidatorService;
 import org.gzunzu.flightvalidator.domain.utils.FlightUtils;
 import org.gzunzu.flightvalidator.domain.utils.ValidationUtils;
@@ -28,16 +29,16 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
     }
 
     private boolean isFlightHeadingWest(final Coordinates coordinates) {
-        return FlightUtils.isHeadingWest(coordinates.getDepartureLongitude(), coordinates.getArrivalLongitude());
+        return Cardinal.WEST.equals(FlightUtils.getDirection(coordinates).getLng());
     }
 
     @Override
     @SuppressWarnings("java:S3878")
-    public boolean isCompliant(final ValidatedFlightDTO flightDTO) {
+    public boolean isCompliant(final ValidationDTO flightDTO) {
         return BooleanUtils.and(new boolean[]{this.validateNoTakeOffHour(flightDTO), this.validateLimitedDistance(flightDTO)});
     }
 
-    private boolean validateNoTakeOffHour(final ValidatedFlightDTO flightDTO) {
+    private boolean validateNoTakeOffHour(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getFlight().getTakeOffTime().isBefore(this.ruleValues.getNoTakeOffHour());
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
@@ -48,7 +49,7 @@ public class WestDestinationRuleServiceImpl implements RuleValidatorService {
         return isCompliant;
     }
 
-    private boolean validateLimitedDistance(final ValidatedFlightDTO flightDTO) {
+    private boolean validateLimitedDistance(final ValidationDTO flightDTO) {
         final boolean isCompliant = flightDTO.getDistance() <= this.ruleValues.getLimitedKm();
         if (!isCompliant) {
             ValidationUtils.addValidationMessage(flightDTO,
